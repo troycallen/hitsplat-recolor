@@ -17,31 +17,43 @@ import net.runelite.api.Hitsplat;
     description = "Recolors hitsplats based on attack styles",
     tags = {"combat", "hitsplat", "recolor"}
 )
-public class HitsplatRecolor extends Plugin
+public class HitsplatRecolorPlugin extends Plugin
 {
     @Inject
     private Client client;
 
     @Inject
-    private RecolorConfig config;
+    private HitsplatRecolorConfig config;
 
     @Override
     protected void startUp() throws Exception
     {
-        log.info("HitSplat Recolor started!");
+        if (config.showDebugMessages())
+        {
+            log.info("HitSplat Recolor started!");
+        }
     }
 
     @Override
     protected void shutDown() throws Exception
     {
-        log.info("HitSplat Recolor stopped!");
+        if (config.showDebugMessages())
+        {
+            log.info("HitSplat Recolor stopped!");
+        }
     }
 
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied hitsplatApplied)
     {
+        if (!config.enablePlugin())
+        {
+            return;
+        }
+
         Hitsplat hitsplat = hitsplatApplied.getHitsplat();
         
+
         switch(hitsplat.getHitsplatType())
         {
             case DAMAGE_ME:
@@ -53,13 +65,13 @@ public class HitsplatRecolor extends Plugin
             case DAMAGE_OPPONENT:
                 hitsplat.setColor(config.crushColor().getRGB());
                 break;
-            // Add cases for other hitsplat types as needed
+
         }
     }
 
     @Provides
-    RecolorConfig provideConfig(ConfigManager configManager)
+    HitsplatRecolorConfig provideConfig(ConfigManager configManager)
     {
-        return configManager.getConfig(RecolorConfig.class);
+        return configManager.getConfig(HitsplatRecolorConfig.class);
     }
 }
