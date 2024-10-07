@@ -30,6 +30,7 @@ public class ExamplePlugin extends Plugin
 		log.info("Example started!");
 	}
 
+
 	@Override
 	protected void shutDown() throws Exception
 	{

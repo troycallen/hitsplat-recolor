@@ -2,6 +2,10 @@ plugins {
 	id 'java'
 }
 
+test {
+    jvmArgs '-ea'
+}
+
 repositories {
 	mavenLocal()
 	maven {
@@ -32,4 +36,19 @@ version = '1.0-SNAPSHOT'
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 	options.release.set(11)
+}
+
+// Add these lines for hot reloading
+tasks.register("developPlugin") {
+	dependsOn("classes")
+	doLast {
+		copy {
+			from("./build/classes/java/main")
+			into("${System.properties['user.home']}/.runelite/plugins/${project.name}")
+		}
+	}
+}
+
+tasks.named("classes").configure {
+	finalizedBy("developPlugin")
 }
